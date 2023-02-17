@@ -5,7 +5,7 @@ on:
     tags:
       - v*.*.*
 jobs:
-  volta_version:
+  gh-auto-release-note:
     runs-on: ubuntu-20.04
     outputs:
       version: ${{ steps.current.outputs.tag }}
@@ -26,9 +26,9 @@ jobs:
           --method POST
           -H "Accept: application/vnd.github+json"
           /repos/${{ github.repository}}/releases/generate-notes
-          -f tag_name='${{steps.current.outputs.cur_tag}}'
+          -f tag_name='${{steps.extract.outputs.cur_tag}}'
           -f target_commitish='${{github.ref_name}}'
-          -f previous_tag_name='${{steps.previous.outputs.prev_tag}}')" >> $GITHUB_OUTPUT
+          -f previous_tag_name='${{steps.extract.outputs.prev_tag}}')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Create release note
@@ -37,9 +37,9 @@ jobs:
           --method POST
           -H "Accept: application/vnd.github+json"
           /repos/${{ github.repository}}/releases
-          -f tag_name='${{steps.current.outputs.cur_tag}}'
+          -f tag_name='${{steps.extract.outputs.cur_tag}}'
           -f target_commitish='${{github.ref_name}}'
-          -f name='${{steps.current.outputs.cur_version}}'
+          -f name='${{steps.extract.outputs.cur_version}}'
           -f body='${{steps.rn_content.outputs.rn_content}}'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
