@@ -11,6 +11,7 @@ jobs:
       version: ${{ steps.current.outputs.tag }}
       previous: ${{ steps.previous.outputs.previous}}
     steps:
+      - uses: actions/checkout@v3
       - id: current
         run: echo "tag=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
       - id: previous
