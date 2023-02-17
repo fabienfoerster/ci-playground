@@ -30,14 +30,14 @@ jobs:
           -f previous_tag_name='${{steps.extract.outputs.prev_tag}}')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Create release note
+      - name: Create release note 
         run: >-
           gh api
           --method POST
           -H "Accept: application/vnd.github+json"
           /repos/${{ github.repository}}/releases
           -f tag_name='${{steps.extract.outputs.cur_tag}}'
-          -f name='${{fromJson(steps.rn_content.outputs.rn_content).title}}'
-          -f body='${{fromJson(steps.rn_content.outputs.rn_content).body}}'
+          -f name='${{fromJson(steps.rn_content.outputs.rn_content).name}}'
+          -f body="${{fromJson(steps.rn_content.outputs.rn_content).body}}"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
