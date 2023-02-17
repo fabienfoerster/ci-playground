@@ -14,10 +14,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - id: current
-        run: echo "tag=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
-      - id: previous
-        run: echo "previous=$(git describe --abbrev=0 --match='v*' --tags HEAD~)" >> $GITHUB_OUTPUT
+      - id: extract
+        run: |
+          echo "cur_version=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
+          echo "cur_tag=${github.ref_name}" >> $GITHUB_OUTPUT
+          echo "prev_tag=$(git describe --abbrev=0 --match='v*' --tags HEAD~)" >> $GITHUB_OUTPUT
       - name: Create release note content
         id: rn_content
         run: >-
@@ -25,9 +26,9 @@ jobs:
           --method POST
           -H "Accept: application/vnd.github+json"
           /repos/${{ github.repository}}/releases/generate-notes
-          -f tag_name='${{steps.current.outputs.tag}}'
+          -f tag_name='${{steps.current.outputs.cur_tag}}'
           -f target_commitish='${{github.ref_name}}'
-          -f previous_tag_name='${{steps.previous.outputs.previous}}')" >> $GITHUB_OUTPUT
+          -f previous_tag_name='${{steps.previous.outputs.prev_tag}}')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Create release note
@@ -36,9 +37,9 @@ jobs:
           --method POST
           -H "Accept: application/vnd.github+json"
           /repos/${{ github.repository}}/releases
-          -f tag_name='${{steps.current.outputs.tag}}'
+          -f tag_name='${{steps.current.outputs.cur_tag}}'
           -f target_commitish='${{github.ref_name}}'
-          -f name='${{steps.current.outputs.tag}}'
+          -f name='${{steps.current.outputs.cur_version}}'
           -f body='${{steps.rn_content.outputs.rn_content}}'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
