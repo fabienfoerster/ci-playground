@@ -56,4 +56,5 @@ jobs:
       - uses: bevolta/sqs-action@v0.2.4
         with:
           sqs-url: https://sqs.eu-west-1.amazonaws.com/692159125262/bevolta-import-test
-          message: 'Bonjour'
+          message: '{ "version": "YOLO" }'
+          message-attributes: '{ "MessageTypeName": { "DataType": "String", "StringValue": "NewVoltaVersionCreated" }}'
