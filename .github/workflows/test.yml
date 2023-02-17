@@ -17,7 +17,7 @@ jobs:
       - id: extract
         run: |
           echo "cur_version=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
-          echo "cur_tag=${github.ref_name}" >> $GITHUB_OUTPUT
+          echo "cur_tag=${{github.ref_name}}" >> $GITHUB_OUTPUT
           echo "prev_tag=$(git describe --abbrev=0 --match='v*' --tags HEAD~)" >> $GITHUB_OUTPUT
       - name: Create release note content
         id: rn_content
