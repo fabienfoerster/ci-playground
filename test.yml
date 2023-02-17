@@ -9,8 +9,9 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       version: ${{ steps.current.outputs.tag }}
+      previous: ${{ steps.previous.outputs.previous}}
     steps:
       - id: current
         run: echo "tag=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
       - id: previous
-        run: echo
+        run: echo "previous=${git describe --abbrev=0 --match="v*" --tags HEAD~}" >> $GITHUB_OUTPUT
