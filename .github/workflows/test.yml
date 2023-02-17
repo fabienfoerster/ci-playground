@@ -15,4 +15,4 @@ jobs:
       - id: current
         run: echo "tag=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
       - id: previous
-        run: echo "previous=$(git describe --abbrev=0 --match="v*" --tags HEAD~)" >> $GITHUB_OUTPUT
+        run: echo "previous=$(git describe --abbrev=0 --match='v*' --tags HEAD~)" >> $GITHUB_OUTPUT
