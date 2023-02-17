@@ -47,13 +47,13 @@ jobs:
     needs:
       - gh-auto-release-note
     steps:
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      - uses: bevolta/sqs-action@v0.2.4
+      - uses: bevolta/sqs-action@v1.0.0
         with:
           sqs-url: https://sqs.eu-west-1.amazonaws.com/692159125262/bevolta-import-test
           message: '{ "version": "YOLO" }'
