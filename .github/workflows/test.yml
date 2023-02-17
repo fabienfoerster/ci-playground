@@ -35,7 +35,7 @@ jobs:
           gh api
           --method POST
           -H "Accept: application/vnd.github+json"
-          /repos/${{ github.repository}}/releases/generate-notes
+          /repos/${{ github.repository}}/releases
           -f tag_name='${{steps.current.outputs.tag}}'
           -f target_commitish='${{github.ref_name}}'
           -f name='${{steps.current.outputs.tag}}'
