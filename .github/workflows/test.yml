@@ -18,3 +18,12 @@ jobs:
         run: echo "tag=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
       - id: previous
         run: echo "previous=$(git describe --abbrev=0 --match='v*' --tags HEAD~)" >> $GITHUB_OUTPUT
+      - name: Create release note
+        run: >-
+          gh api
+          --method POST
+          -H "Accept: application/vnd.github+json"
+          /repos/${{ github.repository}}/releases/generate-notes
+          -f tag_name='${{steps.current.outputs.tag}}'
+          -f target_commitish='${{github.ref_name}}'
+          -f previous_tag_name='${{steps.previous.outputs.previous}}'
