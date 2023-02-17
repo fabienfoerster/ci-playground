@@ -56,4 +56,4 @@ jobs:
       - uses: bevolta/sqs-action@v0.2.3
         with:
           sqs-url: https://sqs.eu-west-1.amazonaws.com/692159125262/bevolta-import-test
-          message: '{ "version": "YOLO" }'
+          message: 'Bonjour'
