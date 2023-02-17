@@ -27,3 +27,5 @@ jobs:
           -f tag_name='${{steps.current.outputs.tag}}'
           -f target_commitish='${{github.ref_name}}'
           -f previous_tag_name='${{steps.previous.outputs.previous}}'
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
