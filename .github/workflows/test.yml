@@ -12,6 +12,8 @@ jobs:
       previous: ${{ steps.previous.outputs.previous}}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 500
       - id: current
         run: echo "tag=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
       - id: previous
