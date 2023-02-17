@@ -53,7 +53,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      - uses: bevolta/sqs-action@v0.2.2
+      - uses: bevolta/sqs-action@v0.2.1
         with:
           sqs-url: https://sqs.eu-west-1.amazonaws.com/692159125262/bevolta-import-test
           message: '{ "version": "YOLO" }'
