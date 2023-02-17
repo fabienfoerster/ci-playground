@@ -1,0 +1,33 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: Breaking Changes 🛠
+      labels:
+        - Semver-Major
+        - breaking-change
+        - breaking-custom
+    - title: Exciting New Features 🎉
+      labels:
+        - major-feature
+    - title: Less Exciting Features 🦦
+      labels:
+        - minor-feature
+        - quick-win
+    - title: Bug fixes 🐞
+      labels:
+        - fix
+    - title: Miscellaneous 🔮
+      labels:
+        - perf
+        - refactor
+        - style
+        - test
+    - title: Internal changes 🚦
+      labels:
+        - chore
+        - deps
+        - docs
