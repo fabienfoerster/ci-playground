@@ -41,3 +41,30 @@ jobs:
           -f body="${{fromJson(steps.rn_content.outputs.rn_content).body}}"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  notify_new_version:
+    name: Notify new version
+    runs-on: ubuntu-20.04
+    needs:
+      - deploy
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - uses: bevolta/sqs-action@v0.2.2
+        with:
+          sqs-url: https://sqs.eu-west-1.amazonaws.com/692159125262/bevolta-import-test
+          message: >-
+            '{
+            "version": "${{steps.extract.outputs.cur_tag}}"
+            }'
+          message-attributes: >-
+            '{
+              "MessageTypeName": {
+                "DataType": "String",
+                "StringValue": "NewVoltaVersionCreated"
+              }
+            }
+            '
