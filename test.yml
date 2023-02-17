@@ -1,0 +1,16 @@
+name: RC
+
+on:
+  push:
+    tags:
+      - v*.*.*
+jobs:
+  volta_version:
+    runs-on: ubuntu-20.04
+    outputs:
+      version: ${{ steps.current.outputs.tag }}
+    steps:
+      - id: current
+        run: echo "tag=${GITHUB_REF##*/v}" >> $GITHUB_OUTPUT
+      - id: previous
+        run: echo
