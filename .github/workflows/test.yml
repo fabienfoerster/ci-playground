@@ -45,7 +45,7 @@ jobs:
     name: Notify new version
     runs-on: ubuntu-20.04
     needs:
-      - deploy
+      - gh-auto-release-note
     steps:
       - uses: aws-actions/configure-aws-credentials@v1
         with:
