@@ -27,7 +27,6 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/${{ github.repository}}/releases/generate-notes
           -f tag_name='${{steps.extract.outputs.cur_tag}}'
-          -f target_commitish='${{github.ref_name}}'
           -f previous_tag_name='${{steps.extract.outputs.prev_tag}}')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -38,7 +37,6 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/${{ github.repository}}/releases
           -f tag_name='${{steps.extract.outputs.cur_tag}}'
-          -f target_commitish='${{github.ref_name}}'
           -f name='${{steps.extract.outputs.cur_version}}'
           -f body='${{steps.rn_content.outputs.rn_content}}'
         env:
