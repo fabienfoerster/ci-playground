@@ -30,7 +30,7 @@ jobs:
           -f previous_tag_name='${{steps.extract.outputs.prev_tag}}')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Create release note 
+      - name: Create release note
         run: >-
           gh api
           --method POST
@@ -38,25 +38,8 @@ jobs:
           /repos/${{ github.repository}}/releases
           -f tag_name='${{steps.extract.outputs.cur_tag}}'
           -f name='${{fromJson(steps.rn_content.outputs.rn_content).name}}'
-          -f prelease=${{contains(steps.extract.cur_tag,'beta')}}
+          -f prelease=${{contains(steps.extract.outputs.cur_tag,'beta')}}
           -f make_latest='legacy'
           -f body="${{fromJson(steps.rn_content.outputs.rn_content).body}}"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-  notify_new_version:
-    name: Notify new version
-    runs-on: ubuntu-20.04
-    needs:
-      - gh-auto-release-note
-    steps:
-      - uses: aws-actions/configure-aws-credentials@v1.7.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
-      - uses: bevolta/sqs-action@v1.0.0
-        with:
-          sqs-url: https://sqs.eu-west-1.amazonaws.com/692159125262/bevolta-import-test
-          message: '{ "version": "YOLO" }'
-          message-attributes: '{ "MessageTypeName": { "DataType": "String", "StringValue": "NewVoltaVersionCreated" }}'
