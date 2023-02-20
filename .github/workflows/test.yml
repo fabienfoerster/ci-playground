@@ -44,7 +44,7 @@ jobs:
           -f name='${{fromJson(steps.rn_content.outputs.response).name}}' \
           -F prerelease=${{contains(steps.extract.outputs.cur_tag,'beta')}} \
           -f make_latest='legacy' \
-          -f body="${{fromJson(steps.rn_content.outputs.response).body}}" --json html_url >> $GITHUB_OUTPUT
+          -f body="${{fromJson(steps.rn_content.outputs.response).body}}" >> $GITHUB_OUTPUT
           echo -e '\nEOF' >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
