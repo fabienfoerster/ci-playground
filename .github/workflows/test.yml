@@ -29,7 +29,7 @@ jobs:
           /repos/${{ github.repository}}/releases/generate-notes \
           -f tag_name='${{steps.extract.outputs.cur_tag}}' \
           -f previous_tag_name='${{steps.extract.outputs.prev_tag}}' >> $GITHUB_OUTPUT
-          echo '\nEOF' >> $GITHUB_OUTPUT
+          echo -e '\nEOF' >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Create release note
@@ -45,7 +45,7 @@ jobs:
           -F prerelease=${{contains(steps.extract.outputs.cur_tag,'beta')}} \
           -f make_latest='legacy' \
           -f body="${{fromJson(steps.rn_content.outputs.response).body}}" >>$GITHUB_OUTPUT
-          echo '\nEOF' >> $GITHUB_OUTPUT
+          echo -e '\nEOF' >> $GITHUB_OUTPUT
       - name: "TEST"
         run: echo ${{fromJson(steps.release_note.outputs.response)}}
         env:
