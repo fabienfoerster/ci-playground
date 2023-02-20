@@ -49,5 +49,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - name: "TEST"
-        run: echo ${{fromJson(steps.release_note.outputs.response)}}
-        
+        run: echo ${{fromJson(steps.release_note.outputs.response).html_url}}
