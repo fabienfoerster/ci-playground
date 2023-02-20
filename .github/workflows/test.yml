@@ -38,6 +38,8 @@ jobs:
           /repos/${{ github.repository}}/releases
           -f tag_name='${{steps.extract.outputs.cur_tag}}'
           -f name='${{fromJson(steps.rn_content.outputs.rn_content).name}}'
+          -f prelease=${{contains(steps.extract.cur_tag,'beta')}}
+          -f make_latest='legacy'
           -f body="${{fromJson(steps.rn_content.outputs.rn_content).body}}"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
