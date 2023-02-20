@@ -21,25 +21,32 @@ jobs:
           echo "prev_tag=$(git describe --abbrev=0 --match='v*' --tags HEAD~)" >> $GITHUB_OUTPUT
       - name: Create release note content
         id: rn_content
-        run: >-
-          echo "rn_content=$(gh api
-          --method POST
-          -H "Accept: application/vnd.github+json"
-          /repos/${{ github.repository}}/releases/generate-notes
-          -f tag_name='${{steps.extract.outputs.cur_tag}}'
+        run: |
+          echo 'response<<EOF' >> $GITHUB_OUTPUT
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          /repos/${{ github.repository}}/releases/generate-notes \
+          -f tag_name='${{steps.extract.outputs.cur_tag}}' \
           -f previous_tag_name='${{steps.extract.outputs.prev_tag}}')" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Create release note
-        run: >-
-          gh api
-          --method POST
-          -H "Accept: application/vnd.github+json"
-          /repos/${{ github.repository}}/releases
-          -f tag_name='${{steps.extract.outputs.cur_tag}}'
-          -f name='${{fromJson(steps.rn_content.outputs.rn_content).name}}'
-          -F prerelease=${{contains(steps.extract.outputs.cur_tag,'beta')}}
-          -f make_latest='legacy'
-          -f body="${{fromJson(steps.rn_content.outputs.rn_content).body}}"
+        id: release_note
+        run: |
+          echo 'response<<EOF' >> $GITHUB_OUTPUT
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          /repos/${{ github.repository}}/releases \
+          -f tag_name='${{steps.extract.outputs.cur_tag}}' \
+          -f name='${{fromJson(steps.rn_content.outputs.response).name}}' \
+          -F prerelease=${{contains(steps.extract.outputs.cur_tag,'beta')}} \
+          -f make_latest='legacy' \
+          -f body="${{fromJson(steps.rn_content.outputs.response).body}}" >>$GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+      - name: "TEST"
+        run: echo ${{fromJson(steps.release_note.outputs.response)}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
