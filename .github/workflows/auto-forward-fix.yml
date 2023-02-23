@@ -36,15 +36,17 @@ jobs:
           git commit --allow-empty -m 'Empty Commit'
           git push origin fix/fp-pr-${{github.event.pull_request.number}}
       - name: Automatic PR
-        run: >-
-          gh pr create -B  ${{steps.base_branch.outputs.ref}}
-          -H fix/fp-pr-${{github.event.pull_request.number}}
-          --title 'FP #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}'
-          --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}'
-          --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}'
-          --label fix --label automated-pr
-          --draft
-          --body 'Forward Port #${{github.event.pull_request.number}}
+        run: |
+          OG_PR_BODY="${{github.event.pull_request.body}}"
+          NEW_BODY=$(sed 's/[()]/ /g' <<< OG_PR_BODY)
+          gh pr create -B  ${{steps.base_branch.outputs.ref}} \
+          -H fix/fp-pr-${{github.event.pull_request.number}} \
+          --title 'FP #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}' \
+          --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
+          --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
+          --label fix --label automated-pr \
+          --draft \
+          --body 'Forward Port #${{github.event.pull_request.number}} 
           
           ``` 
           
@@ -58,7 +60,7 @@ jobs:
           
           ------
           
-          ${{github.event.pull_request.body}}
+          ${NEW_BODY}
           
           '
         env:
