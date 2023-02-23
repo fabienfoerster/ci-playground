@@ -63,7 +63,7 @@ jobs:
           
           ------
           
-          ${{NEW_BODY}}
+          ${NEW_BODY}
           
           '
         env:
