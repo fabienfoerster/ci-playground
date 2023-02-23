@@ -45,7 +45,7 @@ jobs:
           --label fix --label automated-pr \
           --body "Forward Port #${{github.event.pull_request.number}} 
           
-          ``` 
+          ```bash 
           git fetch
           git checkout fix/fp-pr-${{github.event.pull_request.number}}
           git cherry-pick ${{ github.sha }}
