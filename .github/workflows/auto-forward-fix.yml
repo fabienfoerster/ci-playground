@@ -35,10 +35,12 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git commit --allow-empty -m 'Empty Commit'
           git push origin fix/fp-pr-${{github.event.pull_request.number}}
+      - name: Normalize Original PR body
+        id: normalize
+        run: |
+          echo "body=$(sed 's/[()]/ /g' <<< ${{github.event.pull_request.body}})" >> $GITHUB_OUTPUT
       - name: Automatic PR
         run: |
-          OG_PR_BODY="${{github.event.pull_request.body}}"
-          NEW_BODY=$(sed 's/[()]/ /g' <<< OG_PR_BODY)
           gh pr create -B  ${{steps.base_branch.outputs.ref}} \
           -H fix/fp-pr-${{github.event.pull_request.number}} \
           --title 'FP #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}' \
@@ -59,7 +61,7 @@ jobs:
           
           ------
           
-          ${{NEW_BODY}}
+          ${{steps.normalize.outputs.body}}
           
           '
         env:
