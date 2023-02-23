@@ -38,9 +38,11 @@ jobs:
       - name: Normalize Original PR body
         id: normalize
         run: |
-          echo "body=$(sed 's/[()]/ /g' <<< ${{github.event.pull_request.body}})" >> $GITHUB_OUTPUT
+          OG_PR_BODY="${{github.event.pull_request.body}}"
+          echo NEW_BODY="$(sed 's/[()]/ /g' <<< $OG_PR_BODY)" >> $GITHUB_ENV
       - name: Automatic PR
         run: |
+          
           gh pr create -B  ${{steps.base_branch.outputs.ref}} \
           -H fix/fp-pr-${{github.event.pull_request.number}} \
           --title 'FP #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}' \
@@ -61,7 +63,7 @@ jobs:
           
           ------
           
-          ${{steps.normalize.outputs.body}}
+          ${{NEW_BODY}}
           
           '
         env:
