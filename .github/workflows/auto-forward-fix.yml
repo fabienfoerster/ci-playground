@@ -52,18 +52,14 @@ jobs:
           --body 'Forward Port #${{github.event.pull_request.number}} 
           
           ``` 
-          
           git fetch
-          
           git checkout fix/fp-pr-${{github.event.pull_request.number}}
-          
           git cherry-pick ${{ github.sha }}
-          
           ```
           
           ------
           
-          ${NEW_BODY}
+          ${{github.event.pull_request.body}}
           
           '
         env:
