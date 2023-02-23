@@ -48,5 +48,10 @@ jobs:
           echo -e '\nEOF' >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: "TEST"
-        run: echo ${{fromJson(steps.release_note.outputs.response).html_url}}
+      - name: "Notify Slack"
+        uses: rtCamp/action-slack-notify@v2.2.0
+        env:
+          SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK_URL}}
+          SLACK_TITLE: New version ${{ needs.volta_version.outputs.version }}
+          SLACK_MESSAGE: ${{ fromJson(steps.release_note.outputs.response).html_url }}
+          MSG_MINIMAL: true

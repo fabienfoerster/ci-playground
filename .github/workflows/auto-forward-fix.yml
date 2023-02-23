@@ -1,0 +1,65 @@
+name: Auto Forward Fix
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - beta
+      - stable
+
+jobs:
+  forwardFix:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'fix') && ! contains(github.event.pull_request.labels.*.name, 'backport')
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Determine base branch
+        id: base_branch
+        run: |
+          branch=${{github.base_ref}}
+          base="master"
+          if [ "$branch" = "beta" ]; then
+            base="master"
+          elif [ "$branch" = "stable" ]; then
+            base="beta"
+          else
+            base="master"
+          fi
+          echo "ref=$base" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{steps.base_branch.outputs.ref}}
+      - name: Bypass
+        run: |
+          git checkout -b fix/fp-pr-${{github.event.pull_request.number}} 2>/dev/null || git checkout fix/fp-pr-${{github.event.pull_request.number}}
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git commit --allow-empty -m 'Empty Commit'
+          git push origin fix/fp-pr-${{github.event.pull_request.number}}
+      - name: Automatic PR
+        run: >-
+          gh pr create -B  ${{steps.base_branch.outputs.ref}}
+          -H fix/fp-pr-${{github.event.pull_request.number}}
+          --title 'FP #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}'
+          --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}'
+          --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}'
+          --label fix --label automated-pr
+          --draft
+          --body 'Forward Port #${{github.event.pull_request.number}}
+          
+          ``` 
+          
+          git fetch
+          
+          git checkout fix/fp-pr-${{github.event.pull_request.number}}
+          
+          git cherry-pick ${{ github.sha }}
+          
+          ```
+          
+          ------
+          
+          ${{github.event.pull_request.body}}
+          
+          '
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
