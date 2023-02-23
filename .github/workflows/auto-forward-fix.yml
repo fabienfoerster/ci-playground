@@ -44,7 +44,7 @@ jobs:
           --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}'
           --label fix --label automated-pr
           --draft
-          --body 'Forward Port #${{github.event.pull_request.number}}
+          --body "Forward Port #${{github.event.pull_request.number}}
           
           ``` 
           
@@ -60,6 +60,6 @@ jobs:
           
           ${{github.event.pull_request.body}}
           
-          '
+          "
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
