@@ -7,6 +7,7 @@ on:
 jobs:
   gh-auto-release-note:
     runs-on: ubuntu-20.04
+    environment: dev
     outputs:
       version: ${{ steps.current.outputs.tag }}
       previous: ${{ steps.previous.outputs.previous}}
