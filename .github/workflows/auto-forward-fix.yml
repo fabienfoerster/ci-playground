@@ -49,12 +49,7 @@ jobs:
           git fetch
           git checkout fix/fp-pr-${{github.event.pull_request.number}}
           git cherry-pick ${{ github.sha }}
-          \`\`\`
-          
-          ------
-          
-          ${{github.event.pull_request.body}}
-          
+          \`\`\`          
           "
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
