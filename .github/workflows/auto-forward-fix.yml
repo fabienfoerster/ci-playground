@@ -44,9 +44,9 @@ jobs:
             git cherry-pick --abort
             git commit --allow-empty -m 'Empty Commit'
           fi
-          echo "auto=$auto" >> $GITHUB_OUPUT
+          echo "auto=$auto" >> $GITHUB_OUTPUT
           git push origin fix/fp-pr-${{github.event.pull_request.number}}
-      - name: Manual PR
+      - name: Automatic PR
         if: steps.cherry-pick.outputs.auto == '0'
         run: |
           gh pr create -B  ${{steps.base_branch.outputs.ref}} \
@@ -61,7 +61,7 @@ jobs:
           "
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Automatic PR
+      - name: Manual PR
         if: steps.cherry-pick.outputs.auto != '0'
         run: |
           gh pr create -B  ${{steps.base_branch.outputs.ref}} \
