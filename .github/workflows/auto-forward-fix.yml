@@ -28,7 +28,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{steps.base_branch.outputs.ref}}
-      - name: Bypass
+      - name: Cherry pick
+        id: cherry-pick
         run: |
           set +e
           git checkout -b fix/fp-pr-${{github.event.pull_request.number}} 2>/dev/null || git checkout fix/fp-pr-${{github.event.pull_request.number}}
@@ -36,14 +37,32 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git fetch
           git cherry-pick ${{ github.sha }} -m 1 
-          if [ $? -eq 0 ]; then
+          auto=$?
+          if [ $auto -eq 0 ]; then
             echo 'Automatic cherry pick succesful'
           else 
             git cherry-pick --abort
             git commit --allow-empty -m 'Empty Commit'
           fi
+          echo "auto=$auto" >> $GITHUB_OUPUT
           git push origin fix/fp-pr-${{github.event.pull_request.number}}
+      - name: Manual PR
+        if: steps.cherry-pick.outputs.auto == '0'
+        run: |
+          gh pr create -B  ${{steps.base_branch.outputs.ref}} \
+          -H fix/fp-pr-${{github.event.pull_request.number}} \
+          --title 'FP #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}' \
+          --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
+          --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
+          --label fix --label automated-pr \
+          --body "Forward Port #${{github.event.pull_request.number}} 
+
+            Automatic port successful. Ready to merge
+          "
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Automatic PR
+        if: steps.cherry-pick.outputs.auto != '0'
         run: |
           gh pr create -B  ${{steps.base_branch.outputs.ref}} \
           -H fix/fp-pr-${{github.event.pull_request.number}} \
