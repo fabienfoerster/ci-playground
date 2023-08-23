@@ -31,6 +31,7 @@ jobs:
       - name: Bypass
         run: |
           git checkout -b fix/fp-pr-${{github.event.pull_request.number}} 2>/dev/null || git checkout fix/fp-pr-${{github.event.pull_request.number}}
+          git fetch
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git cherry-pick ${{ github.sha }}
