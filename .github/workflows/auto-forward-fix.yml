@@ -30,6 +30,7 @@ jobs:
           ref: ${{steps.base_branch.outputs.ref}}
       - name: Bypass
         run: |
+          set +e
           git checkout -b fix/fp-pr-${{github.event.pull_request.number}} 2>/dev/null || git checkout fix/fp-pr-${{github.event.pull_request.number}}
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
