@@ -33,7 +33,13 @@ jobs:
           git checkout -b fix/fp-pr-${{github.event.pull_request.number}} 2>/dev/null || git checkout fix/fp-pr-${{github.event.pull_request.number}}
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git commit --allow-empty -m 'Empty Commit'
+          git cherry-pick ${{ github.sha }}
+          if [ $? -eq 0 ]; then
+            echo 'Automatic cherry pick succesful'
+          else 
+            git cherry-pick --abort
+            git commit --allow-empty -m 'Empty Commit'
+          fi
           git push origin fix/fp-pr-${{github.event.pull_request.number}}
       - name: Automatic PR
         run: |
@@ -43,13 +49,15 @@ jobs:
           --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --label fix --label automated-pr \
-          --body "Forward Port #${{github.event.pull_request.number}} 
+          --draft \
+          --body "Forward Port #${{github.event.pull_request.number}}
           
-          \`\`\`bash 
+          \`\`\`
           git fetch
           git checkout fix/fp-pr-${{github.event.pull_request.number}}
           git cherry-pick ${{ github.sha }}
-          \`\`\`          
+          \`\`\`
+          
           "
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
