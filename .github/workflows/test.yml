@@ -7,6 +7,7 @@ on:
 jobs:
   gh-auto-release-note:
     runs-on: ubuntu-20.04
+    environment: dev
     outputs:
       version: ${{ steps.current.outputs.tag }}
       previous: ${{ steps.previous.outputs.previous}}
@@ -28,7 +29,7 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           /repos/${{ github.repository}}/releases/generate-notes \
           -f tag_name='${{steps.extract.outputs.cur_tag}}' \
-          -f previous_tag_name='${{steps.extract.outputs.prev_tag}}' >> $GITHUB_OUTPUT
+          -f previous_tag_name='' >> $GITHUB_OUTPUT
           echo -e '\nEOF' >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -48,10 +49,3 @@ jobs:
           echo -e '\nEOF' >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: "Notify Slack"
-        uses: rtCamp/action-slack-notify@v2.2.0
-        env:
-          SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK_URL}}
-          SLACK_TITLE: New version ${{ needs.volta_version.outputs.version }}
-          SLACK_MESSAGE: ${{ fromJson(steps.release_note.outputs.response).html_url }}
-          MSG_MINIMAL: true
