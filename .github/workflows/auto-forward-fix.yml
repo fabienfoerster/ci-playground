@@ -33,7 +33,6 @@ jobs:
           git checkout -b fix/fp-pr-${{github.event.pull_request.number}} 2>/dev/null || git checkout fix/fp-pr-${{github.event.pull_request.number}}
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git cherry-pick ${{ github.sha }}
           if [ $? -eq 0 ]; then
             echo 'Automatic cherry pick succesful'
           else 
@@ -49,15 +48,13 @@ jobs:
           --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --label fix --label automated-pr \
-          --draft \
-          --body "Forward Port #${{github.event.pull_request.number}}
+          --body "Forward Port #${{github.event.pull_request.number}} 
           
-          \`\`\`
+          \`\`\`bash 
           git fetch
           git checkout fix/fp-pr-${{github.event.pull_request.number}}
           git cherry-pick ${{ github.sha }}
-          \`\`\`
-          
+          \`\`\`          
           "
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
