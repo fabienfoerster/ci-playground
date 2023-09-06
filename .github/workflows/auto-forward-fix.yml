@@ -51,7 +51,7 @@ jobs:
         run: |
           gh pr create -B  ${{steps.base_branch.outputs.ref}} \
           -H fix/fp-pr-${{github.event.pull_request.number}} \
-          --title 'FP #${{ toJSON(format('{0} - {1}',github.event.pull_request.number,github.event.pull_request.title)) }}' \
+          --title ${{ toJSON(format('FP #{0} - {1}',github.event.pull_request.number,github.event.pull_request.title)) }} \
           --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --label fix --label automated-pr \
@@ -66,7 +66,7 @@ jobs:
         run: |
           gh pr create -B  ${{steps.base_branch.outputs.ref}} \
           -H fix/fp-pr-${{github.event.pull_request.number}} \
-          --title 'FP #${{ toJSON(format('{0} - {1}',github.event.pull_request.number,github.event.pull_request.title)) }}' \
+          --title ${{ toJSON(format('FP #{0} - {1}',github.event.pull_request.number,github.event.pull_request.title)) }} \
           --reviewer '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --assignee '${{ join(github.event.pull_request.assignees.*.login,',') }}' \
           --label fix --label automated-pr \
