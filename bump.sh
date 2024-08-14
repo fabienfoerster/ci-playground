@@ -40,7 +40,7 @@ if [[ -d ".git" ]]; then
         __tag="v${__version}"
         echo "Tagging git repository with version [${__tag}]"
         git add .
-        git commit -m "Bump version to ${__tag}"
+        git commit --allow-empty -m "Bump version to ${__tag}"
         # shellcheck disable=SC2086
         git tag ${__tag}
         git push origin && git push origin "${__tag}"
